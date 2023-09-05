@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="template1.html">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Patients</title>
+</head>
+
+<body>
+	<div layout:fragment="content">
+		<div class="p-5">
+			<div class="card">
+				<div class="card-header">List Patients</div>
+				<div class="card-body">
+					<form method="get" th:action="@{/user/index}">
+						<label>Keyword:</label>
+						<input type="text" class="" name="keyword" th:value="${keyword}" />
+						<button type="submit" class="btn btn-info">
+							<i class="bi bi-search"></i>
+						</button>
+					</form>
+					<table class="table">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Nom</th>
+								<th>Date Naissance</th>
+								<th>Malade</th>
+								<th>Score</th>
+							</tr>
+							<tr th:each="patient:${patients}">
+								<td th:text="${patient.id}"></td>
+								<td th:text="${patient.nom}"></td>
+								<td th:text="${patient.dateNaissance}"></td>
+								<td th:text="${patient.malade}"></td>
+								<td th:text="${patient.score}"></td>
+								<td th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+									<a onclick="javascript: return confirm('Etes vous sure')"
+										th:href="@{/admin/delete(id=${patient.id},keyword=${keyword},page=${currentPage})}"
+										class="btn btn-danger">
+										<i class="bi bi-trash"></i>
+									</a>
+								</td>
+								<td th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+									<a class="btn btn-success" th:href="@{/admin/editPatient(id=${patient.id})}" >
+										Edit
+									</a>
+								</td>
+							</tr>
+						</thead>
+					</table>
+					<ul class="nav nav-pills">
+						<li th:each="p,item:${pages}">
+							<a th:text="${1+item.index}" th:href="@{/user/index(page=${item.index},keyword=${keyword})}"
+								th:class="${currentPage==item.index?'btn btn-info ms-1':'btn btn-outline-info ms-1'}">
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+</html>
